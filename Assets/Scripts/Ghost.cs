@@ -11,7 +11,8 @@ public class Ghost : MonoBehaviour
     public Transform target;
     public int points = 200;
 
-    private void Awake() {
+    private void Awake()
+    {
         this.movement = GetComponent<Movement>();
         this.home = GetComponent<GhostHome>();
         this.scatter = GetComponent<GhostScatter>();
@@ -19,7 +20,8 @@ public class Ghost : MonoBehaviour
         this.frightened = GetComponent<GhostFrightened>();
     }
 
-    private void Start() {
+    private void Start()
+    {
         ResetState();
     }
 
@@ -31,5 +33,29 @@ public class Ghost : MonoBehaviour
         this.frightened.Disable();
         this.chase.Disable();
         this.scatter.Enable();
+
+        if (this.home != this.initialBehavior)
+        {
+            this.home.Disable();
+        }
+
+        if (this.initialBehavior != null)
+        {
+            this.initialBehavior.Enable();
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Pacman"))
+        {
+            if (this.frightened.enabled)
+            {
+                GameManager.instance.GhostEaten(this);
+            }
+            else
+            {
+                GameManager.instance.PacmanEaten();
+            }
+        }
     }
 }
